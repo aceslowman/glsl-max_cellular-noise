@@ -7,7 +7,7 @@
 	<param name="speed" type="float" default="2000." />
 	<param name="rand_seed" type="float" default="1." />
 	<param name="dim" type="vec2" default="500. 500." />
-	<language name="glsl" version="1.2">
+	<language name="glsl" version="2.1">
 		<bind param="time" program="fp" />
 		<bind param="scale" program="fp" />
 		<bind param="speed" program="fp" />
@@ -30,46 +30,46 @@ float rand(vec2 co){
 
 void main()
 {
-	vec2 st = gl_FragCoord.xy/dim.xy;
+	vec2 st = vec2(gl_FragCoord.xy/dim.xy);
 	st.x *= dim.x/dim.y;
 	vec3 color = vec3(.0);
 
 	st *= scale;
-	
+
 	vec2 i_st = floor(st);
 	vec2 f_st = fract(st);
-	
+
 	float m_dist = 1.;
 	vec2 m_point;
 
 	for(int y = -1; y <= 1; y++){
 		for(int x = -1; x <= 1; x++){
 			vec2 neighbor = vec2(float(x),float(y));
-			vec2 point = rand((i_st + neighbor)*rand_seed);
-			
+			vec2 point = vec2(rand((i_st + neighbor)*rand_seed));
+
 			point = 0.5 + 0.5*sin((time/speed) + 6.2831*point);
-			
+
 			vec2 diff = neighbor + point - f_st;
-			
+
 			float dist = length(diff);
-			
+
 			if(dist < m_dist){
 				m_dist = dist;
 				m_point = point;
 			}
 		}
-	}	
-	
-	
+	}
+
+
 	color.rgb = vec3(m_point.x);
-	
+
 	//isolines
 	//color -= step(.7,abs(sin(100.0*m_dist)))*.3;
-	
+
 	//point dot
 	//color += 1.-step(.02, m_dist);
 
-	gl_FragColor = vec4(color,1.0);	
+	gl_FragColor = vec4(color,1.0);
 }
 
 ]]>
